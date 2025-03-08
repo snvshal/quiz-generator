@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { FileText, Loader2 } from "lucide-react"
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { generateMCQsFromPDF } from "@/app/actions"
 
 export function FileUpload() {
   const router = useRouter()
@@ -22,21 +22,21 @@ export function FileUpload() {
 
     if (selectedFile) {
       if (selectedFile.type !== "application/pdf") {
-        setError("Please upload a PDF file")
+        setError("Please upload a valid PDF file.")
         setFile(null)
         return
       }
 
       if (selectedFile.size > 5 * 1024 * 1024) {
-        // 10MB limit
-        setError("File size should be less than 5MB")
+        // 5MB max limit
+        setError("File size must be less than 5MB.")
         setFile(null)
         return
       }
 
       if (selectedFile.size < 2 * 1024) {
-        // 10MB limit
-        setError("File size should be more than 2KB")
+        // 2KB min limit
+        setError("File size must be more than 2KB.")
         setFile(null)
         return
       }
@@ -49,7 +49,7 @@ export function FileUpload() {
     e.preventDefault()
 
     if (!file) {
-      setError("Please select a PDF file")
+      setError("Please select a PDF file.")
       return
     }
 
@@ -57,34 +57,28 @@ export function FileUpload() {
     setError(null)
 
     try {
-      const formData = new FormData()
-      formData.append("pdf", file)
+      // Call action function directly with the selected file
+      const response = await generateMCQsFromPDF(file)
 
-      const response = await fetch("/api/quiz", {
-        method: "POST",
-        body: formData,
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to generate MCQs")
+      if (!response.success) {
+        throw new Error(response.message || "Failed to generate MCQs.")
       }
 
-      const data = await response.json()
+      const data = response.questions
 
       if (!Array.isArray(data) || data.length === 0) {
-        throw new Error("Received invalid question data from the server")
+        throw new Error("Invalid MCQ data received from the server.")
       }
 
-      // Store the questions in localStorage to access them on the quiz page
+      // Store the questions in localStorage for use on the quiz page
       localStorage.setItem("mcqQuestions", JSON.stringify(data))
 
       // Navigate to the quiz page
       router.push("/quiz")
     } catch (err) {
-      console.error(err)
+      console.error("Error:", err)
       setError(
-        err instanceof Error ? err.message : "An unexpected error occurred"
+        err instanceof Error ? err.message : "An unexpected error occurred."
       )
     } finally {
       setLoading(false)
