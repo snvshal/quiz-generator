@@ -10,8 +10,8 @@ export default function Home() {
           <ThemeSwitch />
         </div>
       </header>
-      <main className="flex-1">
-        <div className="flex flex-col items-center justify-center box-border space-y-8 px-4 py-12 sm:px-6 lg:px-8">
+      <main className="flex-1 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center box-border space-y-8 px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-1 text-center">
             <h2 className="text-3xl font-bold tracking-tight">
               PDF to Quiz Generator
