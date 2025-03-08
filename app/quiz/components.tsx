@@ -199,7 +199,7 @@ export const SinglePageMode: React.FC<SinglePageModeProps> = ({
         const answer = userAnswers.find((a) => a.questionId === question.id)
 
         return (
-          <Card key={question.id} className="w-full">
+          <Card key={question.id} className="w-full mb-4">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">

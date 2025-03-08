@@ -27,9 +27,9 @@ export function FileUpload() {
         return
       }
 
-      if (selectedFile.size > 5 * 1024 * 1024) {
+      if (selectedFile.size > 2 * 1024 * 1024) {
         // 5MB max limit
-        setError("File size must be less than 5MB.")
+        setError("File size must be less than 2MB.")
         setFile(null)
         return
       }
