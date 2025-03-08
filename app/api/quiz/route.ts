@@ -1,6 +1,6 @@
+import { z } from "zod"
 import { generateObject } from "ai"
 import { createGoogleGenerativeAI } from "@ai-sdk/google"
-import { z } from "zod"
 import { NextRequest, NextResponse } from "next/server"
 
 // Initialize the Google Generative AI provider
@@ -28,6 +28,14 @@ const MCQSchema = z
   .min(1)
   .max(10)
   .describe("An array of multiple-choice questions")
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "100mb",
+    },
+  },
+}
 
 export async function POST(req: NextRequest) {
   try {
